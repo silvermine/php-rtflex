@@ -1,0 +1,13 @@
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         backupGlobals="true"
+         backupStaticAttributes="true"
+         bootstrap="tests/BaseTest.php"
+         strict="true"
+         verbose="false"
+         colors="true">
+    <testsuites>
+        <testsuite name="All PHPAlchemy Tests">
+            <directory>tests/</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>
