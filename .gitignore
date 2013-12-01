@@ -14,13 +14,6 @@ Icon
 .Spotlight-V100
 .Trashes
 
-### Linux ###
-.*
-!.gitignore
-!.git*
-*~
-
-
 ### SublimeText ###
 # SublimeText project files
 *.sublime-workspace
