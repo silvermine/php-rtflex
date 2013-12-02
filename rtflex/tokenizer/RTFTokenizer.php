@@ -4,7 +4,7 @@ namespace RTFLex\tokenizer;
 use RTFLex\io\IByteReader;
 
 
-class RTFTokenizer {
+class RTFTokenizer implements ITokenGenerator {
     const CONTROL_CHARS = "/[\\\\|\{\}]/";
     const CONTROL_WORD = "/[a-z]/";
     const NUMERIC = "/[0-9]/";
@@ -86,10 +86,13 @@ class RTFTokenizer {
                     return new RTFToken(RTFToken::T_CONTROL_WORD, $word, $param);
                 }
                 $symbol = $this->reader->readByte();
-                return new RTFToken(RTFToken::T_CONTROL_SYMBOL, $symbol);
+                return new RTFToken(RTFToken::T_CONTROL_SYMBOL, null, $symbol);
 
             default:
                 $str = $this->readText($byte);
+                if (strlen((trim($str))) === 0) {
+                    return $this->readToken();
+                }
                 return new RTFToken(RTFToken::T_TEXT, null, $str);
         }
     }

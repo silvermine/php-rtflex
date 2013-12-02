@@ -1,1 +1,5 @@
-Hello.
+Syn? Ack.
+
+Hello World. This is a sample RTF file.
+
+This is another paragraph.
