@@ -6,7 +6,7 @@ use RTFLex\io\IByteReader;
 
 class RTFTokenizer implements ITokenGenerator {
     const CONTROL_CHARS = "/[\\\\|\{\}]/";
-    const CONTROL_WORD = "/[a-z]/";
+    const CONTROL_WORD = "/[a-z\*]/";
     const NUMERIC = "/[0-9]/";
 
     private $reader;
@@ -27,16 +27,12 @@ class RTFTokenizer implements ITokenGenerator {
         }
 
         $param = "";
-        if (!preg_match(self::CONTROL_CHARS, $this->reader->lookAhead())) {
-            $param = $this->reader->readByte();
-        }
-
         while (preg_match(self::NUMERIC, $this->reader->lookAhead())) {
             $param .= $this->reader->readByte();
         }
 
         // Swallow the control word delim
-        if (!preg_match(self::CONTROL_CHARS, $this->reader->lookAhead())) {
+        if (empty($param) && !preg_match(self::CONTROL_CHARS, $this->reader->lookAhead())) {
             $this->reader->readByte();
         }
 

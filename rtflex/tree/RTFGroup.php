@@ -10,8 +10,8 @@ class RTFGroup {
     private $parent;
 
 
-    public function extractText() {
-        if (!$this->isPrintableText()) {
+    public function extractText($allowInvisible = false) {
+        if (!$this->isPrintableText() && !$allowInvisible) {
             return "";
         }
 
@@ -25,6 +25,16 @@ class RTFGroup {
         }
 
         return $text;
+    }
+
+
+    public function hasControlWord($name) {
+        foreach ($this->controls as $control) {
+            if ($control->getName() == $name) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
@@ -78,6 +88,19 @@ class RTFGroup {
 
         $dest = array_intersect($nonPrintableWords, $controlWords);
         return count($dest) == 0;
+    }
+
+
+    public function listChildren() {
+        $children = array();
+
+        foreach ($this->content as $piece) {
+            if ($piece instanceof RTFGroup) {
+                $children[] = $piece;
+            }
+        }
+
+        return $children;
     }
 
 

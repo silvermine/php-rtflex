@@ -9,6 +9,7 @@ class RTFDocument {
     private $groupStack = array();
     private $tokenizer;
     private $rootGroup;
+    private $metadataGroup;
 
 
     public function __construct(ITokenGenerator $tokenizer) {
@@ -29,6 +30,38 @@ class RTFDocument {
 
     public function extractText() {
         return $this->rootGroup->extractText();
+    }
+
+
+    private function findGroup($root, $control) {
+        if ($root->hasControlWord($control)) {
+            return $root;
+        }
+
+        foreach ($root->listChildren() as $child) {
+            if ($group = $this->findGroup($child, $control)) {
+                return $group;
+            }
+        }
+
+        return null;
+    }
+
+
+    private function getInfoGroup() {
+        if (is_null($this->metadataGroup)) {
+            $this->metadataGroup = $this->findGroup($this->rootGroup, 'info');
+        }
+        return $this->metadataGroup;
+    }
+
+
+    public function getMetadata($name) {
+        $info = $this->getInfoGroup();
+        $block = $this->findGroup($info, $name);
+        return $block instanceof RTFGroup
+           ? $block->extractText($allowInvisible = true)
+           : null;
     }
 
 
