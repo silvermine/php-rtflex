@@ -6,8 +6,9 @@ use RTFLex\io\IByteReader;
 
 class RTFTokenizer implements ITokenGenerator {
     const CONTROL_CHARS = "/[\\\\|\{\}]/";
-    const CONTROL_WORD = "/[a-z\*]/";
-    const NUMERIC = "/[0-9]/";
+    const CONTROL_WORD = "/[^0-9\\\\\{\}\s\*\-]/s";
+    const CONTROL_WORD_DELIM = "/[\?\;]/";
+    const NUMERIC = "/[\-0-9]/";
 
     private $reader;
 
@@ -17,6 +18,10 @@ class RTFTokenizer implements ITokenGenerator {
 
 
     private function readControlWord() {
+        if ($this->reader->lookAhead() == "\n") {
+            return array(RTFToken::T_TEXT, null, $this->reader->readByte());
+        }
+
         $word = "";
         while (preg_match(self::CONTROL_WORD, $this->reader->lookAhead())) {
             $byte = $this->reader->readByte();
@@ -32,13 +37,16 @@ class RTFTokenizer implements ITokenGenerator {
         }
 
         // Swallow the control word delim
-        if (empty($param) && !preg_match(self::CONTROL_CHARS, $this->reader->lookAhead())) {
+        $swallow = empty($param) && !preg_match(self::CONTROL_CHARS, $this->reader->lookAhead());
+        $swallow = $swallow || preg_match(self::CONTROL_WORD_DELIM, $this->reader->lookAhead());
+        if ($swallow) {
             $this->reader->readByte();
         }
 
         $param = strlen($param) == 0 ? null : $param;
         $param = is_numeric($param) ? (int)$param : null;
-        return array($word, $param);
+        $type = strlen($word) > 1 ? RTFToken::T_CONTROL_WORD : RTFToken::T_CONTROL_SYMBOL;
+        return array($type, $word, $param);
     }
 
 
@@ -77,12 +85,8 @@ class RTFTokenizer implements ITokenGenerator {
                 return new RTFToken(RTFToken::T_END_GROUP);
 
             case "\\":
-                if (preg_match(self::CONTROL_WORD, $this->reader->lookAhead())) {
-                    list($word, $param) = $this->readControlWord();
-                    return new RTFToken(RTFToken::T_CONTROL_WORD, $word, $param);
-                }
-                $symbol = $this->reader->readByte();
-                return new RTFToken(RTFToken::T_CONTROL_SYMBOL, null, $symbol);
+                list($type, $word, $param) = $this->readControlWord();
+                return new RTFToken($type, $word, $param);
 
             default:
                 $str = $this->readText($byte);

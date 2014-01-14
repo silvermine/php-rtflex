@@ -7,8 +7,8 @@ use RTFLex\tree\RTFDocument;
 
 class RTFDocumentTest extends BaseTest {
 
-    private function getDocument() {
-        $reader = new StreamReader('tests/sample/hello-world.rtf');
+    private function getDocument($path) {
+        $reader = new StreamReader($path);
         $tokenizer = new RTFTokenizer($reader);
         $doc = new RTFDocument($tokenizer);
         $reader->close();
@@ -17,8 +17,8 @@ class RTFDocumentTest extends BaseTest {
 
 
     public function testExtractMetadata() {
-        $doc = $this->getDocument();
-        $this->assertEquals('Sample Title', $doc->getMetadata('title'));
+        $doc = $this->getDocument('tests/sample/hello-world.rtf');
+        $this->assertEquals('有設計者嗎？', $doc->getMetadata('title'));
         $this->assertEquals('Sample Subject', $doc->getMetadata('subject'));
         $this->assertEquals('Craig Weber', $doc->getMetadata('author'));
         $this->assertEquals('silvermine', $doc->getMetadata('company'));
@@ -28,7 +28,7 @@ class RTFDocumentTest extends BaseTest {
 
     public function testExtractText() {
         $expected = file_get_contents('tests/sample/hello-world.txt');
-        $doc = $this->getDocument();
+        $doc = $this->getDocument('tests/sample/hello-world.rtf');
         $this->assertEquals($expected, $doc->extractText());
     }
 }

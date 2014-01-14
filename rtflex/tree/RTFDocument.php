@@ -60,7 +60,7 @@ class RTFDocument {
         $info = $this->getInfoGroup();
         $block = $this->findGroup($info, $name);
         return $block instanceof RTFGroup
-           ? $block->extractText($allowInvisible = true)
+           ? trim($block->extractText($allowInvisible = true))
            : null;
     }
 

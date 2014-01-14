@@ -17,11 +17,11 @@ class RTFGroup {
 
         $text = "";
         foreach ($this->content as $piece) {
-            if ($piece instanceof RTFToken) {
-                $text .= $piece->getData();
-            } else {
-                $text .= $piece->extractText();
+            $t = $piece->extractText();
+            if ($t == ';') {
+                var_dump($piece);
             }
+            $text .= $t;
         }
 
         return $text;
