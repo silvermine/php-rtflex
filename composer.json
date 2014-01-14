@@ -1,0 +1,6 @@
+{
+    "name": "silvermine/php-rtflex",
+    "autoload": {
+        "classmap": ["rtflex"]
+    }
+}
