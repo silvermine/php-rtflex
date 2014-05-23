@@ -9,6 +9,8 @@ class RTFTokenizer implements ITokenGenerator {
     const CONTROL_WORD = "/[^0-9\\\\\{\}\s\*\-]/s";
     const CONTROL_WORD_DELIM = "/[\?\;]/";
     const NUMERIC = "/[\-0-9]/";
+    const HEX = "/[\-0-9A-F]/i";
+    const HEX_BYTE = "'";
 
     private $reader;
 
@@ -26,14 +28,21 @@ class RTFTokenizer implements ITokenGenerator {
         while (preg_match(self::CONTROL_WORD, $this->reader->lookAhead())) {
             $byte = $this->reader->readByte();
             $word .= $byte;
-            if ($byte == ' ') {
+            if ($byte == ' ' || $byte == self::HEX_BYTE) {
                 break;
             }
         }
 
         $param = "";
-        while (preg_match(self::NUMERIC, $this->reader->lookAhead())) {
+        $isHex = strpos($word, self::HEX_BYTE) === 0;
+        $paramEncoding = $isHex ? self::HEX : self::NUMERIC;
+        while (preg_match($paramEncoding, $this->reader->lookAhead())) {
             $param .= $this->reader->readByte();
+        }
+
+        // Convert from hex?
+        if ($isHex) {
+            $param = hexdec($param);
         }
 
         // Swallow the control word delim

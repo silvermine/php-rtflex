@@ -30,6 +30,7 @@ class RTFToken {
             switch ($this->name) {
                 case 'u':
                 case 'u-':
+                case "'":
                     return $this->uchr($this->data);
             }
 
@@ -55,7 +56,7 @@ class RTFToken {
     }
 
 
-    protected function uchr ($code) {
+    protected function uchr($code) {
         // RTF uses 16-bit signed integers, which means unicode characters
         // above 32767 roll over into negative numbers. This converts then back into
         // 16-bit unsigned int's

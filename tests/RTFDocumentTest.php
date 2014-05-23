@@ -22,7 +22,9 @@ class RTFDocumentTest extends BaseTest {
         $this->assertEquals('Sample Subject', $doc->getMetadata('subject'));
         $this->assertEquals('Craig Weber', $doc->getMetadata('author'));
         $this->assertEquals('silvermine', $doc->getMetadata('company'));
-        $this->assertEquals('2013 silvermine.', $doc->getMetadata('copyright'));
+
+        // Careful editing this – non-breaking spaces are present.
+        $this->assertEquals('2013 silvermine.', $doc->getMetadata('copyright'));
     }
 
 
