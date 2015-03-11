@@ -28,6 +28,15 @@ class RTFDocumentTest extends BaseTest {
     }
 
 
+    public function testExtractNullMetadata() {
+        $doc = $this->getDocument('tests/sample/no-info.rtf');
+        $this->assertNull($doc->getMetadata('title'));
+        $this->assertNull($doc->getMetadata('subject'));
+        $this->assertNull($doc->getMetadata('author'));
+        $this->assertNull($doc->getMetadata('company'));
+    }
+
+
     public function testExtractText() {
         $expected = file_get_contents('tests/sample/hello-world.txt');
         $doc = $this->getDocument('tests/sample/hello-world.rtf');

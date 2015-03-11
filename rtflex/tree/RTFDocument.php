@@ -34,6 +34,10 @@ class RTFDocument {
 
 
     private function findGroup($root, $control) {
+        if (!$root) {
+            return null;
+        }
+
         if ($root->hasControlWord($control)) {
             return $root;
         }
