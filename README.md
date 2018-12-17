@@ -1,3 +1,8 @@
+# WARNING: UNMAINTAINED PROJECT
+
+This project is no longer supported or maintained. Please consider using a different
+project for new development.
+
 # RTFLex
 
 [![Build Status](https://travis-ci.org/silvermine/php-rtflex.png?branch=master)](https://travis-ci.org/silvermine/php-rtflex)
